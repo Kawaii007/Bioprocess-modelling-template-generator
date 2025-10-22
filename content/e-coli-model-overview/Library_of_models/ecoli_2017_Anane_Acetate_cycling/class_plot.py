@@ -8,13 +8,14 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import plotly.offline
 import plotly.express as px
-from plotly.validators.scatter.marker import SymbolValidator
+#from plotly.validators.scatter.marker import SymbolValidator
 #import ecoli_sim_and_pe
 import os
 import sys
 import math
 import copy
 from pathlib import Path
+from IPython.display import display, HTML
 #import ecoli_sim_and_pe
 
 
@@ -199,28 +200,38 @@ class PlotPlotly:
 
     def _set_markers(self, bool, n=10):
         """
+        Define markers for variables.
 
         :param bool: (True/False) if varied markers should be defined
         :param n: number of variables
         :return:
         """
         if bool:
-            # define markers
-            raw_symbols = SymbolValidator().values
-            namestems = []
-            namevariants = []
-            symbols = []
-            for i in range(0, len(raw_symbols), 3):
-                name = raw_symbols[i + 2]
-                symbols.append(raw_symbols[i])
-                namestems.append(name.replace("-open", "").replace("-dot", ""))
-                namevariants.append(name[len(namestems[-1]):])
+            try:
+                # Try to use Plotly's SymbolValidator (works in full Python environments)
+                from plotly.validators.scatter.marker import SymbolValidator
+                raw_symbols = SymbolValidator().values
+                namestems = []
+                namevariants = []
+                symbols = []
+                for i in range(0, len(raw_symbols), 3):
+                    name = raw_symbols[i + 2]
+                    symbols.append(raw_symbols[i])
+                    namestems.append(name.replace("-open", "").replace("-dot", ""))
+                    namevariants.append(name[len(namestems[-1]):])
 
-            markers = list(dict.fromkeys(namestems))
-            self.markers = [x+"-open" for x in markers] * math.ceil(n / len(markers))
-            # self.markers = ['circle-open', 'square-open', 'diamond-open', 'triangle-up-open', 'triangle-down-open', 'triangle-left-open', 'triangle-right-open', 'pentagon-open']
+                markers = list(dict.fromkeys(namestems))
+                self.markers = [x + "-open" for x in markers] * math.ceil(n / len(markers))
+            except Exception:
+                # Fallback for environments like JupyterLite (no SymbolValidator module)
+                fallback_markers = [
+                    "circle-open", "square-open", "diamond-open", "triangle-up-open",
+                    "triangle-down-open", "triangle-left-open", "triangle-right-open",
+                    "star-open", "hexagon-open", "pentagon-open", "cross-open", "x-open"
+                ]
+                self.markers = fallback_markers * math.ceil(n / len(fallback_markers))
         else:
-            # set default
+            # Use the default marker symbol if not varying markers
             self.markers = [self.symbol_data] * n
 
     def _get_feed_start(self, allthedata_expID):
@@ -2440,19 +2451,21 @@ class PlotPlotly:
         return times_new
 
     def _save_fig(self, fig, plot_name):
-        """ Function to save the figure as png and html file.
+        # Generate HTML as string
+        html_str = pio.to_html(fig, full_html=True, include_plotlyjs='cdn')
 
-        :param fig: figure object
-        :param plot_name:
-        :return:
-        """
-        if "html" in self.plot_formats:
-            plotly.offline.plot(fig, filename=os.path.join(self.path, plot_name + ".html"), auto_open=True) # Matteo changed to True
-        if "png" in self.plot_formats:
-            pio.write_image(fig, file=os.path.join(self.path, plot_name + ".png"), scale=3)
-        if "svg" in self.plot_formats:
-            pio.write_image(fig, file=os.path.join(self.path, plot_name + ".svg"), scale=3)
+        # Escape backticks in the HTML string for JS template literal
+        html_str_escaped = html_str.replace("`", "\\`")
 
+        # JavaScript to create a Blob and link
+        js_code = f"""
+                <script>
+                var blob = new Blob([`{html_str_escaped}
+                </script>
+                """
+
+        # Display the script so it runs
+        display(HTML(js_code))
 
 def plot_matplotlib(allthedata, path, plot_info=""):
     """
