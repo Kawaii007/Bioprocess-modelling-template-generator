@@ -1,0 +1,13 @@
+name: Template_generator
+channels:
+- defaults
+dependencies:
+- python=3.12
+- numpy
+- scipy
+- matplotlib
+- plotly
+- ipywidgets
+- nbformat
+- IPython
+- pandas
