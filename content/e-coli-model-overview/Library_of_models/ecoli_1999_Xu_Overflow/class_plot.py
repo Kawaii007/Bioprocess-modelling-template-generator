@@ -15,7 +15,7 @@ import sys
 import math
 import copy
 from pathlib import Path
-from IPython.display import display, HTML, FileLink
+from IPython.display import display, HTML
 #import ecoli_sim_and_pe
 
 
@@ -2453,10 +2453,9 @@ class PlotPlotly:
     def _save_fig(self, fig, plot_name):
 
         filename = os.path.join(self.path, plot_name + ".html")
+        print("If it does not work on the first run try re_running the last cell. If it still does not work go to the path where the HTML is saved and open it manually")
         # Save the figure to an HTML file
         pio.write_html(fig, filename, auto_open=False)
-
-        display(FileLink(filename))
         # Generate HTML as string
         html_str = pio.to_html(fig, full_html=True, include_plotlyjs='cdn')
 
