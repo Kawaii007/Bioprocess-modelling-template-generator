@@ -9,7 +9,10 @@ If you use this **Template Generator** you will only have to understand how the 
 
 This projects also aims to create a Library of models created with this **Template Generator**.
 
-If you want to use the **Template Generator** please read the Quick start guide.
+If you want to use the **Template Generator** locally please read the Quick start guide.
+
+!!! **IMPORTANT**
+If you are reading this in **Jupyter light** just open the template generator folder and read the **README** there.
 
 ---
 Go to **`Library_of_Models`**  to find the Models.

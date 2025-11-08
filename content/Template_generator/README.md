@@ -47,7 +47,7 @@ The following guide will help you understand how the Template generator works an
 
 I hope you previously read the main Readme, so you should have installed all the needed packages and opened the **`Template_generator`** Notebook.
 
-If all required packages are installed, run the **first 3 cells**:  
+If all required packages are installed, or you are using it in **JupyterLight**, run the **first 3 cells**:  
 - Import cell  
 - Long Template Generator cell  
 - Small cell  
